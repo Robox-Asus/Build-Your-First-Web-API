@@ -1,0 +1,41 @@
+@TaskManager_MinimalAPI_HostAddress = http://localhost:5181
+
+GET {{TaskManager_MinimalAPI_HostAddress}}/tasks/
+Accept: application/json
+
+###
+
+GET {{TaskManager_MinimalAPI_HostAddress}}/taks/bb9bf81a-6dfe-4cab-8b45-11c5297db480
+Accept: application/json
+
+###
+
+POST {{TaskManager_MinimalAPI_HostAddress}}/tasks/
+Content-Type: application/json
+
+{
+  "Title": "Robox Call",
+  "Description": "this is for testing purpose !!!"
+}
+
+###
+
+DELETE {{TaskManager_MinimalAPI_HostAddress}}/tasks/6d7502d0-b863-4c74-9aa2-7f7bfabb37df
+
+###
+
+PUT {{TaskManager_MinimalAPI_HostAddress}}/tasks/25071edf-f04a-4bb6-80a4-d3b8b35b9d0c
+Content-Type: application/json
+
+{
+  "Title": "Robox Asus"
+}
+
+###
+
+PATCH {{TaskManager_MinimalAPI_HostAddress}}/tasks/25071edf-f04a-4bb6-80a4-d3b8b35b9d0c
+Content-Type: application/json
+
+{
+  "Description": "This is for testing purpose !!!"
+}
