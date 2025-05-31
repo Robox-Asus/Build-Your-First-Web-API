@@ -1,11 +1,19 @@
-using EntityFramework_Data;
+using FluentValidation;
 using Microsoft.EntityFrameworkCore;
+using TaskManager.Domain.Interfaces;
+using TaskManager.Infrastructure.Data;
+using TaskManager.Infrastructure.Respositories;
+using TaskManager.Infrastructure.Utility;
 using TaskManager_MinimalAPI.Respositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
+builder.Services.AddAutoMapper(typeof(MappingProfile));
+builder.Services.AddScoped<IMemoryTaskRepository, MemoryTaskRepository>();
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+
 builder.Services.AddDbContext<TaskDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
-builder.Services.AddScoped<ITaskRepository, InMemoryTaskRepository>();
+builder.Services.AddValidatorsFromAssemblyContaining<CreateTaskDtoValidator>();
 
 // Add services to the container.
 
