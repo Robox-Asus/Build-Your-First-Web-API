@@ -1,10 +1,14 @@
-﻿using Microsoft.AspNetCore.Routing.Constraints;
+﻿using EntityFramework_Data;
+using Microsoft.AspNetCore.Routing.Constraints;
+using Microsoft.EntityFrameworkCore;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using TaskManager_MinimalAPI.Models;
 using TaskManager_MinimalAPI.Respositories;
 
 var builder = WebApplication.CreateSlimBuilder(args);
+
+builder.Services.AddDbContext<TaskDbContext>(options=> options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 builder.Services.ConfigureHttpJsonOptions(options =>
 {
@@ -16,7 +20,7 @@ builder.Services.ConfigureHttpJsonOptions(options =>
 builder.Services.Configure<RouteOptions>(options => options.ConstraintMap["regex"] = typeof(RegexInlineRouteConstraint));
 
 // Add services to the container.
-builder.Services.AddSingleton<ITaskRepository, InMemoryTaskRepository>();
+builder.Services.AddScoped<ITaskRepository, InMemoryTaskRepository>();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
