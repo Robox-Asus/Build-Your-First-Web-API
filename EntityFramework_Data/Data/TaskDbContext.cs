@@ -1,7 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using TaskManager_MinimalAPI.Models;
+using TaskManager.Domain.Entities;
 
-namespace EntityFramework_Data
+namespace TaskManager.Infrastructure.Data
 {
     public class TaskDbContext(DbContextOptions<TaskDbContext> options) : DbContext(options)
     {

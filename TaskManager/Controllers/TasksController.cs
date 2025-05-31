@@ -1,57 +1,68 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
-using TaskManager_MinimalAPI.Models;
-using TaskManager_MinimalAPI.Respositories;
+using TaskManager.Domain.Entities;
+using TaskManager.Domain.Interfaces;
 
 namespace TaskManager.Controllers
 {
 
     [ApiController]
     [Route("api/[controller]")]
-    public class TasksController(ITaskRepository repository) : ControllerBase
+    public class TasksController(IUnitOfWork _work,IMapper _mapper) : ControllerBase
     {
         [HttpGet]
-        public ActionResult<IEnumerable<TaskItem>> GetAllTasks() => Ok(repository.GetAllTasks());
+        public IActionResult GetAllTasks() => Ok(_mapper.Map<IEnumerable<TaskDto>>(_work.Tasks.GetAllTasks()));
         [HttpGet("{id:guid}")]
-        public ActionResult<TaskItem> GetTaskById(Guid id) => Ok(repository.GetTaskById(id) ?? new TaskItem() { Title = "Task Not Found", Description = "Task Not Found" });
-        [HttpPost]
-        public ActionResult<TaskItem> CreateTask(TaskItem task)
+        public IActionResult GetTaskById(Guid id)
         {
-            task.Id = Guid.NewGuid(); // Generate a new ID for the task
-            repository.CreateTask(task);
-            return CreatedAtAction(nameof(GetTaskById), new { id = task.Id }, task);
+            var task = _work.Tasks.GetTaskById(id);
+            return task is null ? NotFound() : Ok(_mapper.Map<TaskDto>(task));
+        }
+        [HttpPost]
+        public IActionResult CreateTask(CreateOrUpdateTaskDto task)
+        {
+            var newTask = _mapper.Map<TaskItem>(task);
+            newTask.Id = Guid.NewGuid(); // Generate a new ID for the task
+            _work.Tasks.CreateTask(newTask);
+            _work.Complete(); // Save changes to the database
+            return CreatedAtAction(nameof(GetTaskById), new { id = newTask.Id }, _mapper.Map<TaskDto>(newTask));
         }
         [HttpPut("{id:guid}")]
-        public ActionResult<TaskItem> UpdateTask(Guid id, TaskItem updatedTask)
+        public IActionResult UpdateTask(Guid id, CreateOrUpdateTaskDto updatedTask)
         {
-            var existingTask = repository.GetTaskById(id);
-            if (existingTask == null)
+            var existingTask = _work.Tasks.GetTaskById(id);
+            if (existingTask == null) return NotFound();
+            else
             {
-                return NotFound();
+                var modifyTask = _mapper.Map<TaskItem>(updatedTask);
+                modifyTask.Id = id; // Ensure the ID is set to the existing task's ID
+                _work.Tasks.UpdateTask(modifyTask);
+                _work.Complete(); // Save changes to the database
+                return Ok(existingTask);
             }
-
-            updatedTask.Id = id; // Ensure the ID is set to the existing task's ID
-            repository.UpdateTask(updatedTask);
-            return Ok(updatedTask);
         }
         [HttpDelete]
-        public ActionResult<TaskItem> DeleteTask(Guid id)
+        public IActionResult DeleteTask(Guid id)
         {
-            var task = repository.GetTaskById(id);
-            if (task == null)
+            var task = _work.Tasks.GetTaskById(id);
+            if (task == null) return NotFound();
+            try
             {
-                return NotFound();
+                _work.Tasks.DeleteTask(task);
+                _work.Complete(); // Save changes to the database
+                return NoContent(); // Return 204 No Content on successful deletion
             }
-            if (repository.DeleteTask(task))
+            catch (Exception ex)
             {
-                return Ok(task); // 204 No Content
+                // Log the exception if needed
+                return BadRequest($"Failed to delete the task.${ex.ToString()} .");
             }
-            return BadRequest("Failed to delete the task.");
         }
         [HttpPatch("{id:guid}")]
-        public ActionResult<TaskItem> PatchTask(Guid id, [FromBody] JsonElement patchData)
+        public IActionResult PatchTask(Guid id, [FromBody] JsonElement patchData)
         {
-            var task = repository.GetTaskById(id);
+            var task = _work.Tasks.GetTaskById(id);
             if (task is null) return NotFound();
             // Patch title if present
             if (patchData.TryGetProperty("Title", out var titleProp))
@@ -62,8 +73,17 @@ namespace TaskManager.Controllers
             // Patch isCompleted if present
             if (patchData.TryGetProperty("IsCompleted", out var isCompletedProp))
                 task.IsCompleted = isCompletedProp.GetBoolean();
-            repository.UpdateTask(task);
-            return Ok(task);
+            // Update the task in the repository
+            try
+            {
+                _work.Tasks.UpdateTask(task);
+                return Ok(_mapper.Map<TaskDto>(task));
+            }
+            catch (Exception ex)
+            {
+                // Log the exception if needed
+                return BadRequest($"Failed to update the task.${ex.ToString()} .");
+            }
         }
 
     }
