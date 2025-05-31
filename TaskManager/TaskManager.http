@@ -1,2 +1,34 @@
 @TaskManager_HostAddress = http://localhost:5154
 
+###
+GET {{TaskManager_HostAddress}}/api/tasks
+Content-Type : application/json
+
+###
+GET {{TaskManager_HostAddress}}/api/tasks/374f0624-e811-445f-ba62-ffbc61ee2c0a
+
+###
+POST {{TaskManager_HostAddress}}/api/tasks
+Content-Type : application/json
+
+{
+  "Title" : "Gagan Asus",
+  "Description" : "This is for testing purpose ... !!"
+}
+
+###
+PUT {{TaskManager_HostAddress}}/api/tasks/150e7a8b-f775-4ba1-975d-3e8e4f979faf
+Content-Type : application/json
+
+{
+  "Title" : "Gagan Kumar",
+  "Description" : "This is for testing purpose ... !!"
+}
+
+###
+PATCH {{TaskManager_HostAddress}}/api/tasks/9f59035d-cf21-40b1-8211-c4982d167cdc
+Content-Type : application/json
+
+{
+  "Title" : "Gagan Kumar"
+}
