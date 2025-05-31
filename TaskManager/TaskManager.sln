@@ -5,8 +5,6 @@ VisualStudioVersion = 17.14.36121.58
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager.API", "TaskManager.API.csproj", "{410640FF-8ED0-44AE-AB22-2588EF5904CA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager.MinimalAPI", "..\TaskManager_MinimalAPI\TaskManager.MinimalAPI.csproj", "{2522A9EB-37BB-443C-B87F-041DCFA6D94A}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager.Infrastructure", "..\EntityFramework_Data\TaskManager.Infrastructure.csproj", "{65EFAA8B-8F0D-4DF4-8B0E-60D5602556D5}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TaskManager.Domain", "..\Models\TaskManager.Domain.csproj", "{9E6BF54F-1159-48B7-943A-3658B5ECCFCF}"
@@ -21,10 +19,6 @@ Global
 		{410640FF-8ED0-44AE-AB22-2588EF5904CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{410640FF-8ED0-44AE-AB22-2588EF5904CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{410640FF-8ED0-44AE-AB22-2588EF5904CA}.Release|Any CPU.Build.0 = Release|Any CPU
-		{2522A9EB-37BB-443C-B87F-041DCFA6D94A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{2522A9EB-37BB-443C-B87F-041DCFA6D94A}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{2522A9EB-37BB-443C-B87F-041DCFA6D94A}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{2522A9EB-37BB-443C-B87F-041DCFA6D94A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{65EFAA8B-8F0D-4DF4-8B0E-60D5602556D5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{65EFAA8B-8F0D-4DF4-8B0E-60D5602556D5}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{65EFAA8B-8F0D-4DF4-8B0E-60D5602556D5}.Release|Any CPU.ActiveCfg = Release|Any CPU
