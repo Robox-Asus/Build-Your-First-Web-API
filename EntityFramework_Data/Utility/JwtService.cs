@@ -6,7 +6,7 @@ using System.Text;
 using TaskManager.Domain.Entities;
 
 namespace TaskManager.Infrastructure.Utility;
-public class JwtService
+public class JwtService : IJwtService
 {
     private readonly IConfiguration _config;
 
@@ -25,10 +25,11 @@ public class JwtService
         };
 
         var jwtKey = _config["Jwt:Key"];
-        if(jwtKey == null)
+        if (jwtKey == null)
         {
             throw new InvalidOperationException("JWT Key is not configured in appsettings.json");
-        } else
+        }
+        else
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);

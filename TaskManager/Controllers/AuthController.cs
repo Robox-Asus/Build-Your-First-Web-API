@@ -1,34 +1,25 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using TaskManager.Domain.Entities;
-using TaskManager.Infrastructure.Respositories;
-using TaskManager.Infrastructure.Utility;
+using TaskManager.Domain.Interfaces;
 
 namespace TaskManager.API.Controllers;
 
 [Route("api/auth")]
 [ApiController]
-public class AuthController : ControllerBase
+public class AuthController(IUnitOfWork _work) : ControllerBase
 {
-    private readonly UserRepository _userRepo;
-    private readonly JwtService _jwtService;
-
-    public AuthController(UserRepository userRepo, JwtService jwtService)
-    {
-        _userRepo = userRepo;
-        _jwtService = jwtService;
-    }
 
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginRequest request)
     {
-        var user = _userRepo.GetUserByUsername(request.Username);
+        var user = _work.UserRepository.GetUserByUsername(request.Username);
         if (user == null || !BCrypt.Net.BCrypt.Verify(request.Password, user.PasswordHash))
         {
             return Unauthorized(new { Message = "Invalid username or password" });
         }
 
-        var token = _jwtService.GenerateToken(user);
-        return Ok(new { token });
+        var token = _work.JwtService.GenerateToken(user);
+        return Ok(new Token { token = token });
     }
 
     [HttpPost("register")]
@@ -44,8 +35,8 @@ public class AuthController : ControllerBase
             Role = request.Role
         };
 
-        _userRepo.AddUser(newUser);
-        return Ok(new { Message = "User registered successfully" });
+        _work.UserRepository.AddUser(newUser);
+        return Ok(new RegisterResponse { Message = "User registered successfully" });
     }
 }
 
@@ -59,5 +50,15 @@ public class RegisterRequest
     public required string Username { get; set; }
     public required string Password { get; set; }
     public required string Role { get; set; }
+}
+
+public class RegisterResponse
+{
+    public string Message { get; set; } = default!;
+}
+
+public class Token
+{
+    public string token { get; set; } = default!;
 }
 
