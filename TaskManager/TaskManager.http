@@ -1,6 +1,23 @@
 @TaskManager_HostAddress = http://localhost:5154
 
 ###
+POST {{TaskManager_HostAddress}}/api/auth/register
+Content-Type: application/json
+{
+  "username": "user",
+  "password": "userpassword",
+  "role": "User"
+}
+
+###
+POST {{TaskManager_HostAddress}}/api/auth/login
+Content-Type: application/json
+{
+  "username": "admin",
+  "password": "adminpassword"
+}
+
+###
 GET {{TaskManager_HostAddress}}/api/tasks
 Content-Type : application/json
 
