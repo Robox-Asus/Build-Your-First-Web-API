@@ -1,24 +1,38 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.Json;
 using TaskManager.Domain.Entities;
 using TaskManager.Domain.Interfaces;
 
+//Validate User Authorization from Token
+//var identity = HttpContext.User.Identity as ClaimsIdentity;
+//var userId = identity.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+//var username = identity.FindFirst(ClaimTypes.Name)?.Value;
+//var role = identity.FindFirst(ClaimTypes.Role)?.Value;
+
+
 namespace TaskManager.Controllers
 {
 
     [ApiController]
+    [Authorize]
     [Route("api/[controller]")]
     public class TasksController(IUnitOfWork _work,IMapper _mapper) : ControllerBase
     {
+        [Authorize(Roles = "Admin")]
         [HttpGet]
         public IActionResult GetAllTasks() => Ok(_mapper.Map<IEnumerable<TaskDto>>(_work.Tasks.GetAllTasks()));
+
+        [Authorize(Roles = "User,Admin")]
         [HttpGet("{id:guid}")]
         public IActionResult GetTaskById(Guid id)
         {
             var task = _work.Tasks.GetTaskById(id);
             return task is null ? NotFound() : Ok(_mapper.Map<TaskDto>(task));
         }
+
+        [Authorize(Roles = "User")]
         [HttpPost]
         public IActionResult CreateTask(CreateOrUpdateTaskDto task)
         {
@@ -28,6 +42,8 @@ namespace TaskManager.Controllers
             _work.Complete(); // Save changes to the database
             return CreatedAtAction(nameof(GetTaskById), new { id = newTask.Id }, _mapper.Map<TaskDto>(newTask));
         }
+
+        [Authorize(Roles = "User,Admin")]
         [HttpPut("{id:guid}")]
         public IActionResult UpdateTask(Guid id, CreateOrUpdateTaskDto updatedTask)
         {
@@ -42,6 +58,8 @@ namespace TaskManager.Controllers
                 return Ok(existingTask);
             }
         }
+
+        [Authorize(Roles = "User")]
         [HttpDelete]
         public IActionResult DeleteTask(Guid id)
         {
@@ -59,6 +77,8 @@ namespace TaskManager.Controllers
                 return BadRequest($"Failed to delete the task.${ex.ToString()} .");
             }
         }
+
+        [Authorize(Roles = "Admin")]
         [HttpPatch("{id:guid}")]
         public IActionResult PatchTask(Guid id, [FromBody] JsonElement patchData)
         {
