@@ -5,7 +5,7 @@ using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using TaskManager.Domain.Entities;
 
-public class UserRepository(IConfiguration config)
+public class UserRepository(IConfiguration config) : IUserRepository
 {
     private readonly string _connectionString = config.GetConnectionString("DefaultConnection") ?? string.Empty;
 

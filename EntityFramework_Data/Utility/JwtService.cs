@@ -6,7 +6,7 @@ using System.Text;
 using TaskManager.Domain.Entities;
 
 namespace TaskManager.Infrastructure.Utility;
-public class JwtService
+public class JwtService : IJwtService
 {
     private readonly IConfiguration _config;
 
