@@ -25,4 +25,8 @@
     <ProjectReference Include="..\Models\TaskManager.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Include=".github\workflows\pipeline.yml" />
+  </ItemGroup>
+
 </Project>
