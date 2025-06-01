@@ -8,7 +8,6 @@ namespace TaskManager.API.Controllers;
 [ApiController]
 public class AuthController(IUnitOfWork _work) : ControllerBase
 {
-
     [HttpPost("login")]
     public IActionResult Login([FromBody] LoginRequest request)
     {
@@ -61,4 +60,3 @@ public class Token
 {
     public string token { get; set; } = default!;
 }
-

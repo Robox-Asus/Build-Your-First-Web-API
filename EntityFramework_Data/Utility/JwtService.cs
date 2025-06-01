@@ -25,11 +25,10 @@ public class JwtService : IJwtService
         };
 
         var jwtKey = _config["Jwt:Key"];
-        if (jwtKey == null)
+        if(jwtKey == null)
         {
             throw new InvalidOperationException("JWT Key is not configured in appsettings.json");
-        }
-        else
+        } else
         {
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var credentials = new SigningCredentials(key, SecurityAlgorithms.HmacSha256);
